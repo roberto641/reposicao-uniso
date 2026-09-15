@@ -1,0 +1,36 @@
+rules_version = '2';
+
+// ============================================================================
+// REGRAS DE SEGURANÇA DO FIRESTORE — Reposição de Lojas Uniso
+//
+// Conforme decidido com o Roberto: qualquer pessoa que tiver o link do app
+// poderá ler e gravar os pedidos e colaboradores (sem exigir login). Por isso
+// estas regras liberam leitura/gravação apenas nas duas coleções que o app
+// realmente usa ("orders" e "colaboradores") — e bloqueiam tudo o mais no
+// banco por padrão. NÃO é o mesmo que deixar o projeto Firestore inteiro
+// aberto: se no futuro você criar outras coleções neste mesmo projeto, elas
+// continuam bloqueadas até você liberar explicitamente.
+//
+// RISCO A TER EM MENTE: como não há login, qualquer pessoa com a URL do site
+// (não a do Firebase, a do seu Hosting) pode, em teoria, também gravar dados
+// diretamente no banco, sem passar pela interface do app, se souber como.
+// Para o uso interno planejado (link não divulgado publicamente) isso é um
+// risco aceitável na prática, mas se o app crescer ou o link vazar, o passo
+// natural de evolução é migrar para o modo "Somente com login Google"
+// (Firebase Authentication) — isso exigiria trocar estas regras.
+// ============================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /orders/{orderId} {
+      allow read, write: if true;
+    }
+
+    match /colaboradores/{colabId} {
+      allow read, write: if true;
+    }
+
+    // Qualquer outra coleção não listada acima fica bloqueada por padrão.
+  }
+}
