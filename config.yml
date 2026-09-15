@@ -1,5 +1,0 @@
-include:
-  - .github
-
-plugins:
-  - jekyll-redirect-from
